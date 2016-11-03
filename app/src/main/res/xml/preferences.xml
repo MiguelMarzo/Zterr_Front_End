@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="SETTINGS">
+        <CheckBoxPreference
+            android:key="notificaciones"
+            android:title="NOTIFICACIONES"
+            android:summary="Activar notificaciones" />
+        <EditTextPreference
+            android:key="nombre_usuario"
+            android:title="USERNAME"
+            android:summary="Guardar el nombre del usuario"
+            android:dialogTitle="INTRODUZCA EL NOMBRE DEL USUARIO" />
+    </PreferenceCategory>
+
+        <ListPreference
+            android:key="update"
+            android:title="UPDATE"
+            android:dialogTitle="ELIGE UNA: "
+            android:entries="@array/updates"
+            android:entryValues="@array/updatesValues" />
+</PreferenceScreen>

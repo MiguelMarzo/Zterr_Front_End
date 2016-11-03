@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -21,18 +20,18 @@ import android.widget.TextView;
 class CustomizedListAdapter extends BaseAdapter {
 
     private Activity activity;
-    private ArrayList<User> users;
+    private ArrayList<Event> events;
 
     /**
      * Constructor
      *
      * @param activity
-     * @param users
+     * @param events
      */
-    public CustomizedListAdapter(Activity activity, ArrayList<User> users) {
+    public CustomizedListAdapter(Activity activity, ArrayList<Event> events) {
         super();
         this.activity = activity;
-        this.users = users;
+        this.events = events;
     }
 
 
@@ -43,7 +42,7 @@ class CustomizedListAdapter extends BaseAdapter {
      */
     public int getCount() {
         // TODO Auto-generated method stub
-        return users.size();
+        return events.size();
     }
 
     /**
@@ -53,7 +52,7 @@ class CustomizedListAdapter extends BaseAdapter {
      * @return Object
      */
     public Object getItem(int position) {
-        return users.get(position);
+        return events.get(position);
     }
 
     /**
@@ -84,17 +83,17 @@ class CustomizedListAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.main_list_item, null);
         }
 
-        User user = users.get(position);
+        Event user = events.get(position);
         Log.d("PELLODEBUG", user.toString());
 
         //ImageView imageViewIcon = (ImageView) view.findViewById(R.id.imageViewIcon);
         //imageViewIcon.setImageResource(icons[user.getId()]);
 
         TextView textViewTitle = (TextView) view.findViewById(R.id.textViewName);
-        textViewTitle.setText(user.getUsername());
+        textViewTitle.setText(user.getName());
 
         TextView textViewText = (TextView) view.findViewById(R.id.textViewDescription);
-        textViewText.setText(user.getEmail());
+        textViewText.setText(user.getEvent_date());
 
 
         return view;

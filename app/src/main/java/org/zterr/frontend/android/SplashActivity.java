@@ -42,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
         logo.startAnimation(transparencia);
     }
     public void openDefaultFull(View v){
-        Intent intent = new Intent(this, MenuActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
 
     }

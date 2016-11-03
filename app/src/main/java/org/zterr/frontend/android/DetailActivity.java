@@ -1,5 +1,6 @@
 package org.zterr.frontend.android;
 
+import android.content.Intent;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,21 +14,23 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 public class DetailActivity extends AppCompatActivity {
-    private TextView userText;
-    private TextView userEmail;
+    private TextView eventName;
+    private TextView eventDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Intent intent = getIntent();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getSupportActionBar().hide();
+
         setupActionBar();
-        userText = (TextView) this.findViewById(R.id.textViewUser);
-        userText.setText("hola");
-        userEmail = (TextView) this.findViewById(R.id.textViewEmail);
-        userEmail.setText("hola");
+        //String message = intent.getStringExtra("extraValue");
+        eventName = (TextView) this.findViewById(R.id.textViewName);
+        eventName.setText(getIntent().getExtras().getString("EventNameValue"));
+        eventDate = (TextView) this.findViewById(R.id.textViewEventDate);
+        eventDate.setText(getIntent().getExtras().getString("EventDateValue"));
 
     }
 
