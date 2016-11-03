@@ -30,7 +30,7 @@ public class DetailActivity extends AppCompatActivity {
         eventName = (TextView) this.findViewById(R.id.textViewName);
         eventName.setText(getIntent().getExtras().getString("EventNameValue"));
         eventDate = (TextView) this.findViewById(R.id.textViewEventDate);
-        eventDate.setText(getIntent().getExtras().getString("EventDateValue"));
+        eventDate.setText(getIntent().getExtras().getString("EventDescriptionValue"));
 
     }
 

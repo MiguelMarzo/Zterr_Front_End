@@ -89,24 +89,25 @@ public class MainActivity extends AppCompatActivity {
         events = new ArrayList<Event>();
         WebRequest webRequest = new WebRequest();
 
-        if (webRequest.get("http://zterr.org/web/admin/api/event")) {
-            Log.d("DAVIDDEBUG","OK Total: " + webRequest.getResponseString());
-        } else {
-            Log.d("DAVIDDEBUG","Error: " + webRequest.getExceptionMessage());
-        }
+        //if (webRequest.get("http://zterr.org/web/admin/api/event")) {
+           // Log.d("DAVIDDEBUG","OK Total: " + webRequest.getResponseString());
+       // } else {
+           // Log.d("DAVIDDEBUG","Error: " + webRequest.getExceptionMessage());
+        //}
        try{
+            String json = "[{'id':1,'name':'Bolsa de comida','description':'Consigues una bolsa de comida','event_date':'2016-10-01T16:48:00+0200','latitude':0,'longitude':0},{'id':2,'name':'Horda Zombie','description':'Aparecen varios zombies ante ti','event_date':'2016-10-01T16:48:00+0200','latitude':0,'longitude':0},{'id':3,'name':'Bolsa de comida','description':'Consigues una bolsa de comida','event_date':'2016-10-01T16:48:16+0200','latitude':0,'longitude':0},{'id':4,'name':'Horda Zombie','description':'Aparecen varios zombies ante ti','event_date':'2016-10-01T16:48:16+0200','latitude':0,'longitude':0}]";
+            //JSONArray jsonResponse = new JSONArray(json);
 
-            JSONObject jsonResponse = new JSONObject(webRequest.getResponseString());
-            JSONArray books = new JSONArray(webRequest.getResponseString());
-            for (int i = 0; i < books.length(); i++) {
+            JSONArray events = new JSONArray(json);
+            for (int i = 0; i < events.length(); i++) {
                 Event event = new Event();
-                event.setId(books.getJSONObject(i).getInt("id"));
-                event.setName(books.getJSONObject(i).getString("name"));
-                event.setDescription(books.getJSONObject(i).getString("description"));
-                event.setEvent_date(books.getJSONObject(i).getString("event_date"));
-                event.setLatitude(books.getJSONObject(i).getInt("latitude"));
-                event.setLongitude(books.getJSONObject(i).getInt("longitude"));
-                events.add(event);
+                event.setId(events.getJSONObject(i).getInt("id"));
+                event.setName(events.getJSONObject(i).getString("name"));
+                event.setDescription(events.getJSONObject(i).getString("description"));
+                event.setEvent_date(events.getJSONObject(i).getString("event_date"));
+                event.setLatitude(events.getJSONObject(i).getInt("latitude"));
+                event.setLongitude(events.getJSONObject(i).getInt("longitude"));
+                this.events.add(event);
             }
 
         }catch(JSONException e) {
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
         CustomizedListAdapter customizedListAdapter = new CustomizedListAdapter(this, events);
 
-        listViewTasks = (ListView) findViewById(R.id.listViewUsers);
+        listViewTasks = (ListView) findViewById(R.id.listViewEvents);
 
         listViewTasks.setAdapter(customizedListAdapter);
 
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Intent intent = new Intent(MainActivity.this, DetailActivity.class);
                 intent.putExtra("EventNameValue", events.get(position).getName());
-                intent.putExtra("EventDateValue", events.get(position).getEvent_date());
+                intent.putExtra("EventDescriptionValue", events.get(position).getDescription());
                 startActivity(intent);
             }
         });
