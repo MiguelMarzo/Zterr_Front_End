@@ -2,6 +2,7 @@ package org.zterr.frontend.android;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -21,7 +22,7 @@ public class WebRequest {
 	private int responseCode;
 	private String exceptionMessage;
 	private Hashtable<String,String> cookies;
-	
+
 	/**
 	 * default constructor
 	 */
@@ -40,101 +41,176 @@ public class WebRequest {
 		responseString = "";
 		exceptionMessage = "";
 		String line = "";
-		
-		
-		try {
-				// Create an URL instance
-			   URL url = new URL(urlString);
-			   
-		       // Create the HttpConnection
-			   HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		       connection.setRequestProperty("User-Agent", userAgent); 
-		       connection.setRequestMethod("GET");
-		       setCookies(connection);
+		InputStream in = null;
 
-		        // Get input stream from server
-		        BufferedReader in = new BufferedReader(new InputStreamReader(
-		                                    connection.getInputStream()));
-		    // Read response from server
-		    while ((line = in.readLine()) != null) {
-		    	responseString += line;
-		    }
-		    
-		    in.close();
-		return true;
-		
-	    } catch (IOException e) {
-		  exceptionMessage = e.getMessage();
-		  e.printStackTrace();
-		} catch (Exception e) {
-		  exceptionMessage = e.getMessage();
+		try {
+			// Create an URL instance
+			URL url = new URL(urlString);
+
+			// Create the HttpConnection
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestProperty("User-Agent", userAgent);
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestMethod("GET");
+			setCookies(connection);
+
+			int status = connection.getResponseCode();
+			in = (status >= 400)?connection.getErrorStream():connection.getInputStream();
+
+			// Get input stream from server
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+			// Read response from server
+			while ((line = reader.readLine()) != null) {
+				responseString += line;
+			}
+
+			reader.close();
+			return true;
+
+		} catch (IOException e) {
+			exceptionMessage = e.getMessage();
 			e.printStackTrace();
+		} catch (Exception e) {
+			exceptionMessage = e.getMessage();
 		}
-		
+
 		return false;
-		
 	}
-	
+
 	/**
 	 * makes POST request to URL
-	 * @param urlString to request
+	 * @param //url to request
 	 * @param parameters for POST
 	 * @return true if everything went fine, false otherwise
 	 */
 	public boolean post (String urlString, Hashtable<String,String> parameters) {
 		boolean result = false;
-	    String line = "";
-	    String postString = "";
-	    String parameterValue = "";
+		String line = "";
+		String postString = "";
+		String parameterValue = "";
 		responseString = "";
 		exceptionMessage = "";
+		InputStream in = null;
 
-			try {
+		try {
 
-		        URL url = new URL(urlString);
-		        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		        connection.setRequestMethod("POST");
-		        connection.setRequestProperty("User-Agent", userAgent); 
-		        connection.setDoOutput(true);
-		        setCookies(connection);
+			URL url = new URL(urlString);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("User-Agent", userAgent);
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setDoOutput(true);
+			setCookies(connection);
 
-		        OutputStreamWriter output = new OutputStreamWriter(
-		                                         connection.getOutputStream());
-		        
-		        
-		        // We set parameters one by one
-			    for (String parameterName : parameters.keySet()) {
+			OutputStreamWriter output = new OutputStreamWriter(
+					connection.getOutputStream());
+
+
+			// We set parameters one by one
+			for (String parameterName : parameters.keySet()) {
+				parameterValue = URLEncoder.encode(parameters.get(parameterName),"UTF-8");
+				postString += parameterName + "=" +parameterValue +"&";
+			}
+
+			output.write(postString);
+			output.close();
+
+
+			// Now we get the response
+			int status = connection.getResponseCode();
+			in = (status >= 400)?connection.getErrorStream():connection.getInputStream();
+
+			// Get input stream from server
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+
+			getCookies(connection);
+			responseCode = connection.getResponseCode();
+
+			while ((line = reader.readLine()) != null) {
+				responseString += line;
+			}
+			reader.close();
+			return true;
+
+		} catch (IOException e) {
+			exceptionMessage = e.getMessage();
+			e.printStackTrace();
+		} catch (Exception e) {
+			exceptionMessage = e.getMessage();
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * makes POST request to URL
+	 * @param //url to request
+	 * @param //parameters for POST
+	 * @return true if everything went fine, false otherwise
+	 */
+	public boolean postJson (String urlString, String json) {
+		boolean result = false;
+		String line = "";
+		String postString = "";
+		String parameterValue = "";
+		responseString = "";
+		exceptionMessage = "";
+		InputStream in = null;
+
+		try {
+
+			URL url = new URL(urlString);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("User-Agent", userAgent);
+			connection.setRequestProperty("Accept", "application/json");
+			connection.setRequestProperty("Content-Type", "application/json");
+			connection.setDoOutput(true);
+			setCookies(connection);
+
+			OutputStreamWriter output = new OutputStreamWriter(
+					connection.getOutputStream());
+
+
+			// We set parameters one by one
+			   /* for (String parameterName : parameters.keySet()) {
 			    	parameterValue = URLEncoder.encode(parameters.get(parameterName),"UTF-8");
 			    	postString += parameterName + "=" +parameterValue +"&";
-			     }
-			    
-			    output.write(postString);
-		        output.close();
+			     }*/
 
-		        // Now we get the response
-		        BufferedReader in = new BufferedReader(
-		                                    new InputStreamReader(
-		                                    connection.getInputStream()));
-		        
-		      getCookies(connection);
-		      responseCode = connection.getResponseCode();
-		      
-		      while ((line = in.readLine()) != null) {
-		        responseString += line;
-		      }
-		      in.close();
-		     return true;
-		     
-		    } catch (IOException e) {
-		      exceptionMessage = e.getMessage();
-		      e.printStackTrace();
-		    } catch (Exception e) {
-			  exceptionMessage = e.getMessage();	    	
-		      e.printStackTrace();
-		    }
-			return false;
+			output.write(json);
+			output.close();
+
+
+			// Now we get the response
+			int status = connection.getResponseCode();
+			in = (status >= 400)?connection.getErrorStream():connection.getInputStream();
+
+			// Get input stream from server
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+
+			getCookies(connection);
+			responseCode = connection.getResponseCode();
+
+			while ((line = reader.readLine()) != null) {
+				responseString += line;
+			}
+			reader.close();
+			return true;
+
+		} catch (IOException e) {
+			exceptionMessage = e.getMessage();
+			e.printStackTrace();
+		} catch (Exception e) {
+			exceptionMessage = e.getMessage();
+			e.printStackTrace();
+		}
+		return false;
 	}
-	
+
 	/**
 	 * sends previously saved cookies to server.
 	 * This method restores cookie name=value pairs from cookies hashtable
@@ -149,7 +225,7 @@ public class WebRequest {
 		for (String cookieName : cookies.keySet()) {
 			cookieString += cookieName + "=" + cookies.get(cookieName) + ";";
 		}
-		
+
 		// and put them in the request header
 		System.out.println("Sending cookies to server: " + cookieString);
 		connection.setRequestProperty("Cookies", cookieString);
@@ -168,19 +244,19 @@ public class WebRequest {
 	private void getCookies(HttpURLConnection connection) {
 		String headerName=null;
 		String cookieString = "";
-        String cookieName = "";
-        String cookieValue = "";        
-        
+		String cookieName = "";
+		String cookieValue = "";
+
 		// We look up for Set-Cookie entries in header
 		for (int i=1; (headerName = connection.getHeaderFieldKey(i))!=null; i++) {
-		 	if (headerName.equals("Set-Cookie")) {                  
-		 		cookieString = connection.getHeaderField(i);   
-		        cookieString = cookieString.substring(0, cookieString.indexOf(";"));
-		        cookieName = cookieString.substring(0, cookieString.indexOf("="));
-		        cookieValue = cookieString.substring(cookieString.indexOf("=") + 1, cookieString.length());
-		        cookies.put(cookieName, cookieValue);
-		        System.out.println("One cookie, mmm yummy: " + cookieName + "=" + cookieValue);
-		    }
+			if (headerName.equals("Set-Cookie")) {
+				cookieString = connection.getHeaderField(i);
+				cookieString = cookieString.substring(0, cookieString.indexOf(";"));
+				cookieName = cookieString.substring(0, cookieString.indexOf("="));
+				cookieValue = cookieString.substring(cookieString.indexOf("=") + 1, cookieString.length());
+				cookies.put(cookieName, cookieValue);
+				System.out.println("One cookie, mmm yummy: " + cookieName + "=" + cookieValue);
+			}
 		}
 	}
 

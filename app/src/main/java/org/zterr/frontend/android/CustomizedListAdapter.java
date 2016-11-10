@@ -83,17 +83,17 @@ class CustomizedListAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.main_list_item, null);
         }
 
-        Event user = events.get(position);
-        Log.d("PELLODEBUG", user.toString());
+        Event event = events.get(position);
+        Log.d("PELLODEBUG", event.toString());
 
         //ImageView imageViewIcon = (ImageView) view.findViewById(R.id.imageViewIcon);
-        //imageViewIcon.setImageResource(icons[user.getId()]);
+        //imageViewIcon.setImageResource(icons[event.getId()]);
 
         TextView textViewTitle = (TextView) view.findViewById(R.id.textViewName);
-        textViewTitle.setText(user.getName());
+        textViewTitle.setText(event.getName());
 
         TextView textViewText = (TextView) view.findViewById(R.id.textViewDescription);
-        textViewText.setText(user.getEvent_date());
+        textViewText.setText(event.getDescription());
 
 
         return view;
