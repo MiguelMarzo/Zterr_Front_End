@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ImageButton;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    ImageButton floatButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +48,15 @@ public class MainActivity extends AppCompatActivity {
         setupCustomList();
         JsonAsyncTask jsonAsynTask = new JsonAsyncTask(this);
         jsonAsynTask.execute("http://zterr.org/web/admin/api/event");
-
-
+        floatButton = (ImageButton) findViewById(R.id.imageButton);
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+    public void abrirPost(View view){
+        Intent intent = new Intent(this, PushActivity.class);
+        startActivity(intent);
     }
 
     private void setupActionBar() {
